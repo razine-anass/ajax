@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8">
+<title>Insert title here</title>
+</head>
+<body>
+
+<div >
+   <label>Nom:</label>
+   <label th:text="${persone.nom}"></label>
+</div>     
+
+<div>
+  <form th:action="@{/savePersonne}" method="post">
+   <input type="text" name="nom" th:value="${nom}"/>
+   <input type="text" name="prenom" th:value="${prenom}"/>
+   <button type="submit" class="btn btn-primary">save</button>
+  </form>
+</div>        
+
+</body>
+</html>
