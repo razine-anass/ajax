@@ -14,6 +14,10 @@ public interface EtudiantRepository extends JpaRepository<Etudiant, Long>{
 	
 	public List<Etudiant> findByNom(String n);
 	
+	public List<Etudiant> findAll();
+	
+	public void deleteById(Long id);
+	
 	@Query("select e from Etudiant e where e.nom like :x")
 	public Page<Etudiant> chercherEtudiants(@Param("x") String mc, Pageable pageable);
 

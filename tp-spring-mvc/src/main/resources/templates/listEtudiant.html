@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8">
+<title>Insert title here</title>
+</head>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<link type="text/css" rel="stylesheet" th:href="@{https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css}" />
+<link type="text/css" rel="stylesheet" th:href="@{https://cdn.datatables.net/1.10.16/css/dataTables.bootstrap.min.css}" />
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap.min.js"></script>
+<body>
+     
+  <div class="col-md-6">
+      <table id="etudiants" class="table table-stripped">
+      <thead>
+        <tr>
+         <th>nom</th>
+         <th>dateNaissance</th>
+         <th>email</th>
+         <th>photo</th>
+         <th>supprimer</th>
+       </tr>
+      </thead>
+     </table>
+  </div>
+</body>
+
+<script>
+	$(document).ready( function () {
+		 var table = $('#etudiants').DataTable({
+			        "processing": true,
+			        "serverSide": true,
+			        "ajax": {
+			            "url": "list-etudiant",
+			            "type": "GET",
+			            "dataSrc":""
+			        },
+			        "columns": [
+			            { "data": "nom" },
+			            { "data": "dateNaissance" },
+			            { "data": "email" },
+			            { "data": "photo" },
+			            { "data": "Actio",
+			               "render": function (data, type, row, meta) {
+			                      return '<a href="/supprimer/'+ row.id +'" class="editAsset">Supprimer</a>';
+// 			                      href="/supprimer?id='+ row.id +'"
+			                     }
+			            }			            
+			        ]
+			    } );
+
+	});	
+	</script>
+</html>
