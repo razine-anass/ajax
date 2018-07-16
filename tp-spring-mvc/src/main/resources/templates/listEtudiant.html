@@ -4,52 +4,176 @@
 <meta charset="utf-8">
 <title>Insert title here</title>
 </head>
-<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-<link type="text/css" rel="stylesheet" th:href="@{https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css}" />
-<link type="text/css" rel="stylesheet" th:href="@{https://cdn.datatables.net/1.10.16/css/dataTables.bootstrap.min.css}" />
-<script type="text/javascript" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
-<script type="text/javascript" src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap.min.js"></script>
+<script type="text/javascript"
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<link type="text/css" rel="stylesheet"
+	th:href="@{https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css}" />
+<link type="text/css" rel="stylesheet"
+	th:href="@{https://cdn.datatables.net/1.10.16/css/dataTables.bootstrap.min.css}" />
+<script type="text/javascript"
+	src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript"
+	src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap.min.js"></script>
+<style>
+.red {
+	color: red;
+}
+
+.orange {
+	color: orange;
+}
+
+.green {
+	color: green;
+}
+</style>
 <body>
-     
-  <div class="col-md-6">
-      <table id="etudiants" class="table table-stripped">
-      <thead>
-        <tr>
-         <th>nom</th>
-         <th>dateNaissance</th>
-         <th>email</th>
-         <th>photo</th>
-         <th>supprimer</th>
-       </tr>
-      </thead>
-     </table>
-  </div>
+
+	<div class="col-md-6">
+		<table id="etudiants" class="table table-stripped">
+			<thead>
+				<tr>
+					<th>nom</th>
+					<th>dateNaissance</th>
+					<th>email</th>
+					<th>photo</th>
+					<th>action</th>
+				</tr>
+			</thead>
+			<tbody>
+			</tbody>
+		</table>
+	</div>
 </body>
 
 <script>
-	$(document).ready( function () {
-		 var table = $('#etudiants').DataTable({
-			        "processing": true,
-			        "serverSide": true,
-			        "ajax": {
-			            "url": "list-etudiant",
-			            "type": "GET",
-			            "dataSrc":""
-			        },
-			        "columns": [
-			            { "data": "nom" },
-			            { "data": "dateNaissance" },
-			            { "data": "email" },
-			            { "data": "photo" },
-			            { "data": "Actio",
-			               "render": function (data, type, row, meta) {
-			                      return '<a href="/supprimer/'+ row.id +'" class="editAsset">Supprimer</a>';
-// 			                      href="/supprimer?id='+ row.id +'"
-			                     }
-			            }			            
-			        ]
-			    } );
+	function detail(e) {
 
-	});	
-	</script>
+		$('#etudiants tbody tr td.details').on('click', function() {
+			$.ajax({
+				url : "visualiser/" + e,
+				// 		        data :'id='+e,
+				type : 'GET',
+				dataType : 'json',
+				success : function(response) {
+					alert("anass" + response);
+					console.log(response);
+					$("#details").html(response);
+				},
+				error : function(response) {
+					alert("echec" + response);
+					console.log(response);
+				}
+			})
+
+		});
+
+	}
+	
+	function format ( d ) {
+		console.log(d);
+	    return 'Full name: '+d.nom+' date de naissance :' +d.dateNaissance;
+	}
+
+	$(document)
+			.ready(
+					function() {
+						var table = $('#etudiants')
+								.DataTable(
+										{
+											"processing" : true,
+											"serverSide" : true,
+											"ajax" : {
+												"url" : "list-etudiant",
+												"type" : "GET",
+												"dataSrc" : ""
+											},
+											"columns" : [
+													{
+														"data" : "nom",
+														"name" : "nom",
+														"searchable" : true
+													},
+													{
+														"data" : "dateNaissance",
+														"name" : "dateNaissance",
+														"orderable" : true
+													},
+													{
+														"data" : "email",
+														"name" : "email",
+														"orderable" : true
+													},
+													{
+														"data" : "photo",
+														"name" : "photo",
+														"orderable" : true
+													},
+													{// this is Actions Column 
+														mRender : function(
+																data, type, row) {
+															var linkEdit = '<a href="/supprimer/'+ row.id +'"><span class="glyphicon glyphicon-trash red"></span></a>';
+															linkEdit = linkEdit
+																	.replace(
+																			"-1",
+																			row.ID);
+
+															var linkDetails = '<span class="glyphicon glyphicon-pencil orange">';
+
+															var linkDelete = '<a href="#" onclick=detail('
+																	+ row.id
+																	+ ');><span class="glyphicon glyphicon-zoom-in"></a>';
+															//  var linkDelete = '<a href="/visualiser/'+ row.id +'" onclick=detail('+row.id+');><span class="glyphicon glyphicon-zoom-in"></a>';
+
+															linkDelete = linkDelete
+																	.replace(
+																			"-1",
+																			row.ID);
+
+															return linkDetails
+																	+ "  "
+																	+ linkEdit
+																	+ "  "
+																	+ linkDelete;
+														}
+													}
+
+											]
+										});
+						
+						// Array to track the ids of the details displayed rows
+					    var detailRows = [];
+					 
+					    $('#etudiants tbody').on( 'click', 'tr td span.glyphicon-zoom-in', function () {
+					        var tr = $(this).closest('tr');
+					        var row = table.row( tr );
+					        var idx = $.inArray( tr.attr('id'), detailRows );
+					 
+					        if ( row.child.isShown() ) {
+					            tr.removeClass( 'details' );
+					            row.child.hide();
+					 
+					            // Remove from the 'open' array
+					            detailRows.splice( idx, 1 );
+					        }
+					        else {
+					            tr.addClass( 'details' );
+					            row.child( format( row.data() ) ).show();
+					 
+					            // Add to the 'open' array
+					            if ( idx === -1 ) {
+					                detailRows.push( tr.attr('id') );
+					            }
+					        }
+					    } );
+					 
+					    // On each draw, loop over the `detailRows` array and show any child rows
+					    table.on( 'draw', function () {
+					        $.each( detailRows, function ( i, id ) {
+					            $('#'+id+' td.details').trigger( 'click' );
+					        } );
+					    } );
+
+					});
+</script>
 </html>

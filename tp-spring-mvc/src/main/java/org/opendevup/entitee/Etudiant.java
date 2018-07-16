@@ -8,6 +8,10 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 public class Etudiant implements Serializable {
 	
@@ -15,7 +19,9 @@ public class Etudiant implements Serializable {
 	@GeneratedValue
     private Long id;
 	@Column(name="NOM" ,length=30)
+//	@JsonIgnore//champ ne sera pas transferer à la couche web
 	private String nom;
+	@DateTimeFormat(pattern="yyyy-MM-dd")
 	private Date dateNaissance;
 	private String email;
 	private String photo;
